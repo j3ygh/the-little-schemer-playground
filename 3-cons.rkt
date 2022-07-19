@@ -113,3 +113,58 @@
 
 (subst2 `z `x `b `(c c c c b a))
 (subst2 `z `c `b `(c c c c b a))
+
+(define multirember
+  (lambda (lat a)
+    (cond
+      ((null? lat)
+        `())
+      ((eq? (car lat) a)
+        (multirember (cdr lat) a))
+      (else
+        (cons (car lat) (multirember (cdr lat) a))))))
+
+(multirember `(1 1 2 2 3 3) 2)
+
+(define multiinsertR
+  (lambda (new old lat)
+    (cond
+      ((null? lat)
+        `())
+      ((eq? (car lat) old)
+        (cons old
+          (cons new
+            (multiinsertR new old (cdr lat)))))
+      (else
+        (cons (car lat)
+          (multiinsertR new old (cdr lat)))))))
+
+(multiinsertR `fried `fish `(chips and fish or fish and fried))
+
+(define multiinsertL
+  (lambda (new old lat)
+    (cond
+      ((null? lat)
+        `())
+      ((eq? (car lat) old)
+        (cons new
+          (cons old
+            (multiinsertL new old (cdr lat)))))
+      (else
+        (cons (car lat)
+          (multiinsertL new old (cdr lat)))))))
+
+(multiinsertL `fried `fish `(chips and fish or fish and fried))
+
+(define multisubst
+  (lambda (new old lat)
+    (cond
+      ((null? lat)
+        `())
+      ((eq? (car lat) old)
+        (cons new
+          (multisubst new old (cdr lat))))
+      (else
+        (cons (car lat) (multisubst new old (cdr lat)))))))
+
+(multisubst `fried `fish `(chips and fish or fish and fried))
