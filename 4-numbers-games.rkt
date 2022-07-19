@@ -1,5 +1,4 @@
 #lang racket
-; page 74
 
 (define atom?
   (lambda (x)
