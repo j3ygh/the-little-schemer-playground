@@ -1,18 +1,18 @@
 #lang racket
 
 (define rember*
-  (lambda (l a) 
+  (lambda (l a)
     (cond
       ((null? l)
-        `())
+       `())
       ((list? (car l))
-        (cons (rember* (car l) a)
-          (rember* (cdr l) a)))
+       (cons (rember* (car l) a)
+             (rember* (cdr l) a)))
       ((eq? (car l) a)
-        (cdr l))
+       (cdr l))
       (else
-        (cons (car l)
-          (rember* (cdr l) a))))))
+       (cons (car l)
+             (rember* (cdr l) a))))))
 
 (rember* `((foo bar) foo bar baz baz foo) `bar)
 (rember* `(() foo bar baz baz foo) `bar)
@@ -22,17 +22,17 @@
   (lambda (new old l)
     (cond
       ((null? l)
-        `())
+       `())
       ((list? (car l))
-        (cons (insertR* new old (car l))
-          (insertR* new old (cdr l))))
+       (cons (insertR* new old (car l))
+             (insertR* new old (cdr l))))
       ((eq? (car l) old)
-        (cons old
-          (cons new
-            (insertR* new old (cdr l)))))
+       (cons old
+             (cons new
+                   (insertR* new old (cdr l)))))
       (else
-        (cons (car l)
-          (insertR* new old (cdr l)))))))
+       (cons (car l)
+             (insertR* new old (cdr l)))))))
 
 (insertR* 8 `bar `((foo bar) foo bar baz baz foo))
 (insertR* 8 `bar `(() foo bar baz baz foo))
@@ -45,7 +45,7 @@
 ; When recurring on a number, n, ask two questions about
 ; it: (zero ? n) and else.
 ; When recurring on a list of S-expressions, l, ask three
-; question about it: (null? l), ( atom? ( car l)), and else. 
+; question about it: (null? l), ( atom? ( car l)), and else.
 
 ; Because all *-functions work on lists that are
 ; either
@@ -61,20 +61,20 @@
 ; neither (null? l) nor ( atom? ( car l)) are true.
 ; It must be changed to be closer to termination. The changing argument must be tested in the termination condition:
 ; when using cdr, test termination with null? and
-; when using sub1 , test termination with zero ?. 
+; when using sub1 , test termination with zero ?.
 
 (define occur*
   (lambda (a l)
     (cond
       ((null? l)
-        0)
+       0)
       ((list? (car l))
-        (+ (occur* a (car l))
+       (+ (occur* a (car l))
           (occur* a (cdr l))))
       ((eq? (car l) a)
-        (+ 1 (occur* a (cdr l))))
+       (+ 1 (occur* a (cdr l))))
       (else
-        (occur* a (cdr l))))))
+       (occur* a (cdr l))))))
 
 (occur* `a `((a b c) a b c (a (a (b)))))
 (occur* `a `(() a b c (a (a (b)))))
@@ -84,16 +84,16 @@
   (lambda (new old l)
     (cond
       ((null? l)
-        `())
+       `())
       ((list? (car l))
-        (cons (subst* new old (car l))
-          (subst* new old (cdr l))))
+       (cons (subst* new old (car l))
+             (subst* new old (cdr l))))
       ((eq? (car l) old)
-        (cons new
-          (subst* new old (cdr l))))
+       (cons new
+             (subst* new old (cdr l))))
       (else
-        (cons (car l)
-          (subst* new old (cdr l)))))))
+       (cons (car l)
+             (subst* new old (cdr l)))))))
 
 (subst* 6 `a `((a b c) a b c (a (a (b)))))
 (subst* 6 `a `(() a b c (a (a (b)))))
@@ -103,17 +103,17 @@
   (lambda (new old l)
     (cond
       ((null? l)
-        `())
+       `())
       ((list? (car l))
-        (cons (insertL* new old (car l))
-          (insertL* new old (cdr l))))
+       (cons (insertL* new old (car l))
+             (insertL* new old (cdr l))))
       ((eq? (car l) old)
-        (cons new
-          (cons old
-            (insertL* new old (cdr l)))))
+       (cons new
+             (cons old
+                   (insertL* new old (cdr l)))))
       (else
-        (cons (car l)
-          (insertL* new old (cdr l)))))))
+       (cons (car l)
+             (insertL* new old (cdr l)))))))
 
 (insertL* 6 `a `((a b c) a b c (a (a (b)))))
 (insertL* 6 `a `(() a b c (a (a (b)))))
@@ -123,17 +123,66 @@
   (lambda (a l)
     (cond
       ((null? l)
-        #f)
+       #f)
       ((list? (car l))
-        (or (member* a (car l))
-          (member* a (cdr l))))
+       (or (member* a (car l))
+           (member* a (cdr l))))
       ((eq? (car l) a)
-        #t)
+       #t)
       (else
-        (member* a (cdr l))))))
+       (member* a (cdr l))))))
 
 (member* `a `((a b c) a b c (a (a (b)))))
 (member* `a `(() a b c (a (a (b)))))
 (member* `a `())
 
-; leftmost, page 103
+(define leftmost
+  (λ (l)
+    (cond
+      ((list? (car l))
+       (leftmost (car l)))
+      (else
+       (car l)))))
+
+(leftmost `(1))
+
+; True or false: it is possible that one of the
+; arguments of (and . . . ) and (or ... ) is not
+; considered? 1
+
+; True, because (and ... ) stops if the first
+; argument has the value #f, and (or ... )
+; stops if the first argument has the value #t .
+
+; 1 ( cond ... ) also has the property of not considering all of
+; its arguments. Because of this property, however, neither
+; (and ... ) nor (or ... ) can be deft ned as functions in terms
+; of (cond ... ), though both (and ... ) and (or ... ) can be
+; expressed as abbreviations of ( cond ... )-expressions:
+; (and tt {3) = (cond (tt {3) (else #f))
+; and
+; (or tt {3) = (cond (tt #t) (else {3))
+
+(define eqlist?
+  (λ (l1 l2)
+    (cond
+      ((and (null? l1) (null? l2))
+       #t)
+      ((or (null? l1) (null? l2))
+       #f)
+      ((and (list? (car l1))
+            (list? (car l2)))
+       (and (eqlist? (car l1) (car l2))
+            (eqlist? (cdr l1) (cdr l2))))
+      ((or (list? (car l1))
+           (list? (car l2)))
+       #f)
+      (else
+       (and (eq? (car l1) (car l2))
+            (eqlist? (cdr l1) (cdr l2)))))))
+
+(eqlist? `() `())
+(eqlist? `(1 2 3) `(1 2 3))
+(eqlist? `((1 2 3) 2 3) `((1 2 3) 2 3))
+(eqlist? `(() 2 3) `((1 2 3) 2 3))
+(eqlist? `((3 2 1) 2 3) `((1 2 3) 2 3))
