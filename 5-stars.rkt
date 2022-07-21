@@ -163,6 +163,20 @@
 ; and
 ; (or tt {3) = (cond (tt #t) (else {3))
 
+; Use racket-server formatter and `λ` instead of `lambda`
+
+
+(define equal?
+  (λ (s1 s2)
+    (cond
+      ((and (list? s1) (list? s2)
+        (eqlist? s1 s2)))
+      ((or (list? s1) (list? s2))
+        #f)
+      (else
+        (eq? s1 s2)))))
+
+
 (define eqlist?
   (λ (l1 l2)
     (cond
@@ -170,19 +184,16 @@
        #t)
       ((or (null? l1) (null? l2))
        #f)
-      ((and (list? (car l1))
-            (list? (car l2)))
-       (and (eqlist? (car l1) (car l2))
-            (eqlist? (cdr l1) (cdr l2))))
-      ((or (list? (car l1))
-           (list? (car l2)))
-       #f)
       (else
-       (and (eq? (car l1) (car l2))
+       (and (equal? (car l1) (car l2))
             (eqlist? (cdr l1) (cdr l2)))))))
 
-(eqlist? `() `())
-(eqlist? `(1 2 3) `(1 2 3))
-(eqlist? `((1 2 3) 2 3) `((1 2 3) 2 3))
-(eqlist? `(() 2 3) `((1 2 3) 2 3))
-(eqlist? `((3 2 1) 2 3) `((1 2 3) 2 3))
+(equal? 1 1)
+(equal? `foo `foo)
+(equal? `() `())
+(equal? `(1 2 3) `(1 2 3))
+(equal? `((1 2 3) 2 3) `((1 2 3) 2 3))
+(equal? `(() 2 3) `((1 2 3) 2 3))
+(equal? `((3 2 1) 2 3) `((1 2 3) 2 3))
+
+; Page. 109
