@@ -170,11 +170,11 @@
   (λ (s1 s2)
     (cond
       ((and (list? s1) (list? s2)
-        (eqlist? s1 s2)))
+            (eqlist? s1 s2)))
       ((or (list? s1) (list? s2))
-        #f)
+       #f)
       (else
-        (eq? s1 s2)))))
+       (eq? s1 s2)))))
 
 
 (define eqlist?
@@ -196,4 +196,19 @@
 (equal? `(() 2 3) `((1 2 3) 2 3))
 (equal? `((3 2 1) 2 3) `((1 2 3) 2 3))
 
-; Page. 109
+(define rember
+  (λ (s l)
+    (cond
+      ((null? l)
+       `())
+      ((list? (car l))
+       (cons (rember s (car l))
+             (rember s (cdr l))))
+      ((eq? s (car l))
+       (rember s (cdr l)))
+      (else
+       (cons (car l)
+             (rember s (cdr l)))))))
+
+(rember `bar `(foo bar baz (foo bar) (bar)))
+(rember `foo `(foo bar baz (foo bar) (bar)))
