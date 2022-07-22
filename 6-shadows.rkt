@@ -1,37 +1,40 @@
+; Try a new indentation style in this file.
 #lang racket
 
-; Try a new indentation style
-( define operators `(+ - * /) )
+; Helpers
+( define operators `( + - * / ) )
 
 ( define in?
-  ( lambda ( s l )
+  ( lambda ( exp l )
     ( cond
       ( ( null? l )
         #f )
-      ( ( eq? ( car l ) s )
+      ( ( eq? ( car l ) exp )
         #t )
       ( else
-        ( in? s ( cdr l ) ) ) ) ) )
+        ( in? exp ( cdr l ) ) ) ) ) )
 
-( define is-operator
-  ( lambda ( s )
-    ( in? s operators ) ) )
+( define operator?
+  ( lambda ( exp )
+    ( in? exp operators ) ) )
 
+; Functions
 ( define numbered?
-  ( lambda ( aexp )
+  ( lambda ( exp )
     ( cond
-      ( ( null? aexp )
+      ( ( null? exp )
         #f )
-      ( ( list? aexp )
+      ( ( list? exp )
         ( and
-          ( is-operator aexp )
-          ( numbered? ( car ( cdr aexp ) ) )
-          ( numbered? ( car ( cdr ( cdr aexp ) ) ) ) ) )
-      ( ( number? aexp )
+          ( operator? ( car exp ) )
+          ( numbered? ( car ( cdr exp ) ) )
+          ( numbered? ( car ( cdr ( cdr exp ) ) ) ) ) )
+      ( ( number? exp )
         #t )
       ( else
-        #f ) ) ) )
+        `foo ) ) ) )
 
+; Testings
 ( numbered? 42 )
 ( numbered? `() )
 ( numbered? `( + 1 2 ) )
