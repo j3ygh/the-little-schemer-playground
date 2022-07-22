@@ -143,22 +143,64 @@
       ((null? l)
        `())
       (else
-       (cons (car l)
+       (cons (first l)
              (firsts (cdr l)))))))
+
+(define seconds
+  (lambda (l)
+    (cond
+      ((null? l)
+       `())
+      (else
+       (cons (second l)
+             (seconds (cdr l)))))))
 
 (define fun?
   (lambda (rel)
     (set? (firsts rel))))
 
+; Interesting question:
 ; Why we want to indent `cons` and `build` with different styles?
+
+(define revpair
+  (lambda (pair)
+    (build (second pair) (first pair))))
+
 (define revrel
   (lambda (rel)
     (cond
       ((null? rel)
        `())
       (else
-       (cons (build
-              (second (car rel))
-              (first (car rel)))
+       (cons (revpair (car rel))
              (revrel (cdr rel)))))))
-; Page 136
+
+(define fullfun?
+  (lambda (fun)
+    (set? (seconds fun))))
+
+(define one-to-one?
+  (lambda (fun)
+    (fun? (revrel fun))))
+
+; (define cookies
+;   (lambda ()
+;     (bake
+;      (quote (350 degrees))
+;      (quote (12 minutes))
+;      (mix
+;       (quote (walnuts 1 cup))
+;       (quote (chocolate-chips 16 ounces))
+;       (mix
+;        (mix
+;         (quote (flou r 2 cups))
+;         (quote (oatmeal 2 cups))
+;         (quote (salt .5 teaspoon))
+;         (quote (baking-powder 1 teaspoon))
+;         (quote (baking-soda 1 teaspoon)))
+;        (mix
+;         (quote (eggs 2 large))
+;         (quote (vanilla 1 teaspoon))
+;         (cream
+;           (quote (butter 1 cup))
+;           (quote (sugar 2 cups)))))))))
