@@ -42,3 +42,34 @@
 ( numbered? `() )
 ( numbered? `( + 1 2 ) )
 ( numbered? `( + 1 ( * 3 4 ) ) )
+
+( define value
+  ( lambda ( exp )
+    ( cond
+      ( ( atom? exp )
+        exp )
+      ( ( eq? ( car exp ) `+ )
+        ( +
+          ( value ( car ( cdr exp ) ) )
+          ( value ( car ( cdr ( cdr exp ) ) ) ) ) )
+      ( ( eq? ( car exp ) `- )
+        ( -
+          ( value ( car ( cdr exp ) ) )
+          ( value ( car ( cdr ( cdr exp ) ) ) ) ) )
+      ( ( eq? ( car exp ) `* )
+        ( *
+          ( value ( car ( cdr exp ) ) )
+          ( value ( car ( cdr ( cdr exp ) ) ) ) ) )
+      ( ( eq? ( car exp ) `/ )
+        ( /
+          ( value ( car ( cdr exp ) ) )
+          ( value ( car ( cdr ( cdr exp ) ) ) ) ) ) ) ) )
+
+( value 42 )
+( value `( + 1 2 ) )
+( value `( + 1 ( * 3 4 ) ) )
+
+; The Seventh Commandment
+; Recur on the subparts that are of the same nature:
+; • On the sublists of a list.
+; • On the subexpressions of an arithmetic expression. 
