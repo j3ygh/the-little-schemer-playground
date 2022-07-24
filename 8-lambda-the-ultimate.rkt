@@ -89,4 +89,61 @@
 
 (insert-eq?-l `qoo `foo `(foo bar baz (foo bar) (bar)))
 ((insert-g eq? `r) `qoo `foo `(foo bar baz (foo bar) (bar)))
-; Page. 148
+
+; Some `folder/reduce` thing practices are ommitted here.
+; Author tell us to construct these functions (insertL, insertR, subset and rember)
+; with some lambdas as parameters, making a `insert-g` high-order function template.
+
+( define atom? 
+  ( lambda ( exp )
+    ( and
+      ( not ( null? exp ) )
+      ( not ( pair? exp ) ) ) ) )
+
+( define operators `( + - * / ) )
+
+( define in?
+  ( lambda ( exp l )
+    ( cond
+      ( ( null? l )
+        #f )
+      ( ( eq? ( car l ) exp )
+        #t )
+      ( else
+        ( in? exp ( cdr l ) ) ) ) ) )
+
+( define operator?
+  ( lambda ( exp )
+    ( in? exp operators ) ) )
+
+( define 1st-sub-aexp
+  ( lambda ( aexp )
+    ( car ( cdr aexp ) ) ) )
+
+( define 2st-sub-aexp
+  ( lambda ( aexp )
+    ( car ( cdr ( cdr aexp ) ) ) ) )
+
+( define operator
+  ( lambda ( aexp )
+    ( car aexp ) ) )
+
+( define symbol-to-function
+  ( lambda ( symbol )
+    ( cond
+      ( ( eq? symbol `+ ) + )
+      ( ( eq? symbol `- ) - )
+      ( ( eq? symbol `* ) * )
+      ( ( eq? symbol `/ ) / ) ) ) )
+
+( define value
+  ( lambda ( exp )
+    ( cond
+      ( ( atom? exp )
+        exp )
+      ( ( operator? ( operator exp ) )
+        ( ( symbol-to-function ( operator exp ) )
+          ( value ( 1st-sub-aexp exp ) )
+          ( value ( 2st-sub-aexp exp ) ) ) ) ) ) )
+
+( value `( + 0 ( * 3 4 ) ) )
