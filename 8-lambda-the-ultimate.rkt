@@ -147,3 +147,6 @@
           ( value ( 2st-sub-aexp exp ) ) ) ) ) ) )
 
 ( value `( + 0 ( * 3 4 ) ) )
+
+; Author use collector to demonstrate the continuation.
+; Interesting :)
