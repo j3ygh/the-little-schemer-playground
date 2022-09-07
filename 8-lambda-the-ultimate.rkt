@@ -150,3 +150,4 @@
 
 ; Author use collector to demonstrate the continuation.
 ; Interesting :)
+; Need to read more about collector and contination (Page 138)
